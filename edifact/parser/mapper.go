@@ -88,6 +88,9 @@ func mapSegment(s *ast.Segment, v reflect.Value) error {
 	structType := structVal.Type()
 	componentIdx := 0
 	for i := 0; i < structType.NumField(); i++ {
+		if componentIdx >= len(s.Components) {
+			break
+		}
 		field := structType.Field(i)
 		fieldTags := field.Tag.Get("edi")
 		tags := parseTags(fieldTags)
@@ -108,19 +111,21 @@ func mapSegment(s *ast.Segment, v reflect.Value) error {
 			}
 		case reflect.Struct:
 			newComposite := reflect.New(fieldVal.Type())
-			if err := mapComposite(s.Components[componentIdx], newComposite); err != nil {
+			if err := mapComposite(s.Components[componentIdx], newComposite); err != nil && tags.Min > 0 {
 				return err
 			}
 			fieldVal.Set(newComposite.Elem())
 		default:
+			// TODO: repeating composites and repeating elements
 			panic("unreachable")
 		}
+		componentIdx++
 	}
 	return nil
 }
 
 func mapComposite(c *ast.Component, v reflect.Value) error {
-	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Struct {
+	if v.Kind() != reflect.Pointer || v.Elem().Kind() != reflect.Struct {
 		return fmt.Errorf("expected a pointer to a struct, got %T", v.Interface())
 	}
 	structVal := v.Elem()
@@ -133,14 +138,14 @@ func mapComposite(c *ast.Component, v reflect.Value) error {
 		}
 
 		field := structType.Field(i)
-		vTags := parseTags(field.Tag.Get("edi"))
+		tags := parseTags(field.Tag.Get("edi"))
 
 		fieldVal := structVal.Field(i)
 
 		switch fieldVal.Kind() {
 		case reflect.String:
 			element := c.Elements[elementIdx]
-			if err := validateElement(element, field.Name, vTags); err != nil {
+			if err := validateElement(element, field.Name, tags); err != nil {
 				return err
 			}
 			fieldVal.SetString(element)
@@ -149,13 +154,13 @@ func mapComposite(c *ast.Component, v reflect.Value) error {
 			if fieldVal.Type().Elem().Kind() == reflect.String {
 				fieldsLeft := structType.NumField() - i - 1
 				elementsAvailable := len(c.Elements) - elementIdx - fieldsLeft
-				numToConsume := vTags.Max
+				numToConsume := tags.Max
 				numToConsume = min(elementsAvailable, numToConsume)
 
 				if numToConsume > 0 {
 					sliceElements := c.Elements[elementIdx : elementIdx+numToConsume]
 					for _, el := range sliceElements {
-						if err := validateElement(el, field.Name, vTags); err != nil {
+						if err := validateElement(el, field.Name, tags); err != nil {
 							return err
 						}
 					}
