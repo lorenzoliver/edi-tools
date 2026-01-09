@@ -93,3 +93,39 @@ type C901 struct {
 	E1131 string `edi:"min=0,max=1,len=17,type=e"`
 	E3055 string `edi:"min=0,max=1,len=3,type=e"`
 }
+
+type S009 struct {
+	E0065 string `edi:"min=1,max=1,len=6,type=e"`
+	E0052 string `edi:"min=1,max=1,len=3,type=e"`
+	E0054 string `edi:"min=1,max=1,len=3,type=e"`
+	E0051 string `edi:"min=1,max=1,len=3,type=e"`
+	E0057 string `edi:"min=0,max=1,len=6,type=e"`
+	E0110 string `edi:"min=0,max=1,len=6,type=e"`
+	E0113 string `edi:"min=0,max=1,len=6,type=e"`
+}
+
+type S010 struct {
+	E0070 string `edi:"min=1,max=1,len=2,type=e"`
+	E0073 string `edi:"min=0,max=1,len=1,type=e"`
+}
+
+type S016 struct {
+	E0115 string `edi:"min=1,max=1,len=14,type=e"`
+	E0116 string `edi:"min=0,max=1,len=3,type=e"`
+	E0118 string `edi:"min=0,max=1,len=3,type=e"`
+	E0051 string `edi:"min=0,max=1,len=3,type=e"`
+}
+
+type S017 struct {
+	E0121 string `edi:"min=1,max=1,len=14,type=e"`
+	E0122 string `edi:"min=0,max=1,len=3,type=e"`
+	E0124 string `edi:"min=0,max=1,len=3,type=e"`
+	E0051 string `edi:"min=0,max=1,len=3,type=e"`
+}
+
+type S018 struct {
+	E0127 string `edi:"min=1,max=1,len=14,type=e"`
+	E0128 string `edi:"min=0,max=1,len=3,type=e"`
+	E0130 string `edi:"min=0,max=1,len=3,type=e"`
+	E0051 string `edi:"min=0,max=1,len=3,type=e"`
+}

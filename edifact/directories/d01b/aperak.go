@@ -1,6 +1,7 @@
 package d01b
 
 type APERAK struct {
+	UNH UNH          `edi:"min=1,max=1,type=s"`
 	BGM BGM          `edi:"min=1,max=1,type=s"`
 	DTM []DTM        `edi:"min=0,max=9,type=s"`
 	FTX []FTX        `edi:"min=0,max=9,type=s"`
@@ -9,6 +10,7 @@ type APERAK struct {
 	SG2 []APERAK_SG2 `edi:"min=0,max=9,type=g"`
 	SG3 []APERAK_SG3 `edi:"min=0,max=9,type=g"`
 	SG4 []APERAK_SG4 `edi:"min=0,max=99999,type=g"`
+	UNT UNT          `edi:"min=1,max=1,type=s"`
 }
 
 type APERAK_SG1 struct {

@@ -39,13 +39,30 @@ func parseTags(t string) mappingTag {
 }
 
 type cursor struct {
+	unh      *ast.Segment
 	segments []*ast.Segment
+	unt      *ast.Segment
 	pos      int
 }
 
+func newCursor(unh *ast.Segment, segments []*ast.Segment, unt *ast.Segment) *cursor {
+	return &cursor{
+		unh:      unh,
+		segments: segments,
+		unt:      unt,
+		pos:      -1,
+	}
+}
+
 func (c *cursor) current() *ast.Segment {
+	if c.pos == -1 {
+		return c.unh
+	}
 	if c.pos < len(c.segments) {
 		return c.segments[c.pos]
+	}
+	if c.pos == len(c.segments) {
+		return c.unt
 	}
 	return nil
 }
@@ -55,7 +72,7 @@ func (c *cursor) advance() {
 }
 
 func MapEdifact(msg *ast.Message) (any, error) {
-	cursor := &cursor{segments: msg.Segments}
+	cursor := newCursor(msg.UNH, msg.Segments, msg.UNT)
 	spec, err := GetSpec(msg.UNH.Components[1].String())
 	if err != nil {
 		return nil, err

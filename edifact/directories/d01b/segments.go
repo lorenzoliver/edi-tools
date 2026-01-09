@@ -62,7 +62,16 @@ type RFF struct {
 }
 
 type UNH struct {
+	E0062 string `edi:"min=1,max=1,len=14,type=e"`
+	S009  S009   `edi:"min=1,max=1,type=c"`
+	E0068 string `edi:"min=1,max=1,len=10,type=e"`
+	S010  S010   `edi:"min=0,max=1,type=c"`
+	S016  S016   `edi:"min=0,max=1,type=c"`
+	S017  S017   `edi:"min=0,max=1,type=c"`
+	S018  S018   `edi:"min=0,max=1,type=c"`
 }
 
 type UNT struct {
+	E0074 string `edi:"min=1,max=1,len=10,type=e"`
+	E0062 string `edi:"min=1,max=1,len=14,type=e"`
 }
