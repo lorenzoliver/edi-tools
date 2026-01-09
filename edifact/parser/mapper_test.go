@@ -1,12 +1,17 @@
 package parser_test
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 
 	"github.com/lorenzoliver/edi-tools/edifact/directories/d01b"
 	"github.com/lorenzoliver/edi-tools/edifact/parser"
 )
+
+func init() {
+	parser.Register("APERAK:D:01B:UN", reflect.TypeFor[d01b.APERAK]())
+}
 
 func TestMappingEdifact(t *testing.T) {
 	const sampleAPERAK = `UNB+UNOA:2+VALENCIAPORT+MVAL+60913:1143+2006091311458'

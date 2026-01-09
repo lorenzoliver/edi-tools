@@ -150,7 +150,7 @@ func (p Parser) parseSegment() (*ast.Segment, error) {
 		c := &ast.Component{}
 		el := p.split(part, p.d.ElementSeperator)
 		for _, e := range el {
-			c.Elements = append(c.Elements, string(e))
+			c.Elements = append(c.Elements, string(p.removeReleaseChars(e)))
 		}
 		seg.Components = append(seg.Components, c)
 	}
@@ -188,10 +188,14 @@ func (p Parser) split(data []byte, seperator byte) [][]byte {
 	var cur []byte
 	i := 0
 	for i < len(data) {
-		if data[i] == p.d.ReleaseChar && i+1 < len(data) && (data[i+1] == p.d.ReleaseChar || data[i+1] == seperator) {
+		if data[i] == p.d.ReleaseChar && i+1 < len(data) && ( data[i+1] == seperator) {
 			//skip release char
 			i++
 			cur = append(cur, data[i])
+		} else if data[i] == p.d.ReleaseChar && i+1 < len(data) && (data[i+1] == p.d.ReleaseChar) {
+			//add both release chars, will be properly cleaned in removeReleaseChars()
+			cur = append(cur, data[i:i+2]...)
+			i++
 		} else if data[i] == seperator {
 			res = append(res, cur)
 			cur = nil
@@ -202,6 +206,18 @@ func (p Parser) split(data []byte, seperator byte) [][]byte {
 	}
 	res = append(res, cur)
 	return res
+}
+
+func (p Parser) removeReleaseChars(data []byte) []byte {
+	i := 0
+	for i < len(data){
+		if data[i] == p.d.ReleaseChar && i+1 < len(data) && ( data[i+1] == p.d.ReleaseChar) {
+			//remove ReleaseChar
+			data = append(data[:i], data[i+1:]...)
+		}
+		i++
+	}
+	return data
 }
 
 func (p Parser) skipNewlines() {

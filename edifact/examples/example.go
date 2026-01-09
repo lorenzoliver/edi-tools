@@ -3,24 +3,33 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
+	"reflect"
+	"strings"
 
 	"github.com/lorenzoliver/edi-tools/edifact/directories/d01b"
 	"github.com/lorenzoliver/edi-tools/edifact/parser"
 )
 
-func main() {
-	f, err := os.Open("./edifact/examples/input.edi")
-	defer func() {
-		err := f.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
+const input = `UNB+UNOA:2+VALENCIAPORT+MVAL+60913:1143+2006091311458'
+UNH+VPRT6000005192+APERAK:D:01B:UN'
+BGM+963+VPRT6000005192+27'
+DTM+137:200609131145:203'
+RFF+ACW:20060622415205'
+RFF+AGO:20060622415205'
+NAD+VP+VALENCIAPORT'
+ERC+1'
+FTX+AAO+++El documento identificado no existe'
+UNT+9+VPRT6000005192'
+UNZ+1+2006091311458'
+`
 
-	if err != nil {
-		log.Fatal(err)
-	}
+func init() {
+	parser.Register("APERAK:D:01B:UN", reflect.TypeFor[d01b.APERAK]())
+}
+
+func main() {
+	f := strings.NewReader(input)
+
 	p := parser.NewParser(f)
 	interchange, err := p.Parse()
 	if err != nil {
